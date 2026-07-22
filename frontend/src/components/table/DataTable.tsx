@@ -65,7 +65,7 @@ export function DataTable({
 
   return (
     <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
-      <table className="w-full min-w-[880px] border-collapse text-left">
+      <table className="w-full min-w-[820px] border-collapse text-left">
         <thead className="sticky top-0 z-10 bg-surface-alt">
           <tr className="divide-x divide-border text-xs font-semibold uppercase tracking-wide text-ink-muted">
             <th className="w-10 px-2 py-2.5">
@@ -79,10 +79,10 @@ export function DataTable({
                 />
               )}
             </th>
-            <th className="min-w-[68px] px-2 py-2.5">Date</th>
-            <th className="min-w-[70px] px-2 py-2.5">SR</th>
-            <th className="min-w-[70px] px-2 py-2.5">Lot</th>
-            <th className="min-w-[120px] px-2 py-2.5">File Name</th>
+            <th className="min-w-[54px] px-1.5 py-2.5">Date</th>
+            <th className="min-w-[50px] px-1.5 py-2.5">SR</th>
+            <th className="min-w-[50px] px-1.5 py-2.5">Lot</th>
+            <th className="min-w-[110px] px-1.5 py-2.5">File Name</th>
             {PROGRESS_COLUMNS.map((c) => (
               <th key={c.key} className="w-[80px] px-1.5 py-2.5 text-center">
                 {c.label}
