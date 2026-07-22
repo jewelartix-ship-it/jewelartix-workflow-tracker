@@ -2,6 +2,7 @@ import { AlertCircle } from 'lucide-react';
 import type { Task } from '../../types';
 import { EditableCell } from './EditableCell';
 import { DriveCell } from './DriveCell';
+import { ProgressCell } from './ProgressCell';
 import { WORK_STATUS_ACCENT } from '../../lib/workStatus';
 import { isStale } from '../../lib/workStatus';
 import { formatDate } from '../../lib/utils';
@@ -158,12 +159,10 @@ export function DataTable({
                 </td>
                 {PROGRESS_COLUMNS.map((c) => (
                   <td key={c.key} data-no-row-edit className="px-1.5 py-1.5 text-center">
-                    <input
-                      type="checkbox"
+                    <ProgressCell
                       checked={task[c.key]}
-                      onChange={(e) => onProgressToggle(task.id, c.key, e.target.checked)}
-                      disabled={!isAdmin}
-                      className="h-4 w-4 rounded border-border-strong text-accent focus:ring-accent disabled:cursor-not-allowed disabled:opacity-70"
+                      onChange={(value) => onProgressToggle(task.id, c.key, value)}
+                      readOnly={!isAdmin}
                     />
                   </td>
                 ))}
