@@ -65,10 +65,10 @@ export function DataTable({
 
   return (
     <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
-      <table className="w-full min-w-[1100px] border-collapse text-left">
+      <table className="w-full min-w-[880px] border-collapse text-left">
         <thead className="sticky top-0 z-10 bg-surface-alt">
-          <tr className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-            <th className="w-10 px-3 py-2.5">
+          <tr className="divide-x divide-border text-xs font-semibold uppercase tracking-wide text-ink-muted">
+            <th className="w-10 px-2 py-2.5">
               {isAdmin && (
                 <input
                   type="checkbox"
@@ -79,21 +79,21 @@ export function DataTable({
                 />
               )}
             </th>
-            <th className="min-w-[112px] px-3 py-2.5">Date</th>
-            <th className="min-w-[100px] px-3 py-2.5">SR</th>
-            <th className="min-w-[100px] px-3 py-2.5">Lot</th>
-            <th className="min-w-[160px] px-3 py-2.5">File Name</th>
+            <th className="min-w-[68px] px-2 py-2.5">Date</th>
+            <th className="min-w-[70px] px-2 py-2.5">SR</th>
+            <th className="min-w-[70px] px-2 py-2.5">Lot</th>
+            <th className="min-w-[120px] px-2 py-2.5">File Name</th>
             {PROGRESS_COLUMNS.map((c) => (
-              <th key={c.key} className="w-[92px] px-2 py-2.5 text-center">
+              <th key={c.key} className="w-[80px] px-1.5 py-2.5 text-center">
                 {c.label}
                 <span className="mt-0.5 block text-[9px] font-medium normal-case tracking-normal text-ink-faint">
                   by {c.owner}
                 </span>
               </th>
             ))}
-            <th className="w-16 px-3 py-2.5">CAD Drive</th>
-            <th className="w-16 px-3 py-2.5">Render Drive</th>
-            <th className="min-w-[180px] px-3 py-2.5">Note</th>
+            <th className="w-14 px-2 py-2.5">CAD Drive</th>
+            <th className="w-14 px-2 py-2.5">Render Drive</th>
+            <th className="min-w-[160px] px-2 py-2.5">Note</th>
           </tr>
         </thead>
         <tbody>
@@ -114,11 +114,11 @@ export function DataTable({
                   }
                 }}
                 className={cn(
-                  'border-t border-border transition-colors hover:bg-surface-alt/60',
+                  'divide-x divide-border border-t border-border transition-colors hover:bg-surface-alt/60',
                   selected && 'bg-accent-soft/40'
                 )}
               >
-                <td className={cn('border-l-4 px-3 py-1.5', WORK_STATUS_ACCENT[task.workStatus])}>
+                <td className={cn('border-l-4 px-2 py-1.5', WORK_STATUS_ACCENT[task.workStatus])}>
                   {isAdmin && (
                     <input
                       type="checkbox"
@@ -157,7 +157,7 @@ export function DataTable({
                   />
                 </td>
                 {PROGRESS_COLUMNS.map((c) => (
-                  <td key={c.key} data-no-row-edit className="px-2 py-1.5 text-center">
+                  <td key={c.key} data-no-row-edit className="px-1.5 py-1.5 text-center">
                     <input
                       type="checkbox"
                       checked={task[c.key]}
@@ -167,7 +167,7 @@ export function DataTable({
                     />
                   </td>
                 ))}
-                <td data-no-row-edit className="px-2 py-1.5">
+                <td data-no-row-edit className="px-1.5 py-1.5">
                   <DriveCell
                     link={task.cadDriveLink}
                     onSave={(link) => onCadDriveSave(task.id, link)}
@@ -175,7 +175,7 @@ export function DataTable({
                     readOnly={!isAdmin}
                   />
                 </td>
-                <td data-no-row-edit className="px-2 py-1.5">
+                <td data-no-row-edit className="px-1.5 py-1.5">
                   <DriveCell
                     link={task.renderDriveLink}
                     onSave={(link) => onRenderDriveSave(task.id, link)}
