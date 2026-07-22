@@ -1,0 +1,10 @@
+{$DOMAIN} {
+    reverse_proxy app:4000
+    encode gzip
+
+    header {
+        # Caddy already terminates TLS and Express's helmet() handles the
+        # rest of the security headers; this just adds HSTS at the edge too.
+        Strict-Transport-Security "max-age=15552000; includeSubDomains"
+    }
+}

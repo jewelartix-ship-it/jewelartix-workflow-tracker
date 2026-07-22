@@ -1,0 +1,30 @@
+# Use this file instead of docker-compose.yml when you don't have a domain
+# and want to access the app by the server's IP address only (plain HTTP,
+# no automatic HTTPS certificate).
+#
+# Run with:
+#   docker compose -f docker-compose.no-domain.yml up -d --build
+#
+# Database lives in Neon (or any Postgres you point DATABASE_URL at) — not on
+# this server's disk — so it's identical durability to the domain-based setup.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      SEED_ADMIN_NAME: ${SEED_ADMIN_NAME:-Admin}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD}
+    volumes:
+      - ./backups:/app/data/backups
+    ports:
+      - '80:4000'

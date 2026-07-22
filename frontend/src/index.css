@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-bg text-ink font-sans;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  /* Visible keyboard focus everywhere, styled to match the warm palette
+     instead of the browser default blue ring. */
+  :focus-visible {
+    outline: 2px solid theme('colors.accent.DEFAULT');
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: theme('colors.accent.soft');
+  }
+
+  /* Thin, quiet scrollbars that match the palette instead of the OS default. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: theme('colors.border.strong');
+    border-radius: 8px;
+    border: 2px solid theme('colors.bg');
+  }
+}
+
+@layer utilities {
+  /* Used on any cell showing numbers/dates so columns line up visually. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

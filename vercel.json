@@ -1,0 +1,9 @@
+{
+  "installCommand": "echo 'skipping default install; handled in buildCommand'",
+  "buildCommand": "bash build.sh",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
