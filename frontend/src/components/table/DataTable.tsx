@@ -79,10 +79,10 @@ export function DataTable({
                 />
               )}
             </th>
-            <th className="min-w-[54px] px-1.5 py-2.5">Date</th>
-            <th className="min-w-[50px] px-1.5 py-2.5">SR</th>
-            <th className="min-w-[50px] px-1.5 py-2.5">Lot</th>
-            <th className="min-w-[110px] px-1.5 py-2.5">File Name</th>
+            <th className="min-w-[54px] px-1.5 py-2.5 text-center">Date</th>
+            <th className="min-w-[50px] px-1.5 py-2.5 text-center">SR</th>
+            <th className="min-w-[50px] px-1.5 py-2.5 text-center">Lot</th>
+            <th className="min-w-[110px] px-1.5 py-2.5 text-center">File Name</th>
             {PROGRESS_COLUMNS.map((c) => (
               <th key={c.key} className="w-[80px] px-1.5 py-2.5 text-center">
                 {c.label}
@@ -129,8 +129,8 @@ export function DataTable({
                     />
                   )}
                 </td>
-                <td data-inline-editable className="px-1 py-1 tabular">
-                  <div className="flex items-center gap-1.5">
+                <td data-inline-editable className="px-1 py-1 text-center tabular">
+                  <div className="flex items-center justify-center gap-1.5">
                     {stale && (
                       <span title="No update in over 7 days on this stage">
                         <AlertCircle size={13} className="shrink-0 text-warning" />
@@ -143,13 +143,13 @@ export function DataTable({
                     />
                   </div>
                 </td>
-                <td data-inline-editable className="px-1 py-1">
+                <td data-inline-editable className="px-1 py-1 text-center">
                   <EditableCell value={task.sr} onCommit={(v) => onFieldEdit(task.id, 'sr', v)} readOnly={!isAdmin} />
                 </td>
-                <td data-inline-editable className="px-1 py-1">
+                <td data-inline-editable className="px-1 py-1 text-center">
                   <EditableCell value={task.lot} onCommit={(v) => onFieldEdit(task.id, 'lot', v)} readOnly={!isAdmin} />
                 </td>
-                <td data-inline-editable className="px-1 py-1">
+                <td data-inline-editable className="px-1 py-1 text-center">
                   <EditableCell
                     value={task.fileName}
                     onCommit={(v) => onFieldEdit(task.id, 'fileName', v)}
