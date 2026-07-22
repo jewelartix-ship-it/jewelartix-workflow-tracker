@@ -46,7 +46,7 @@ export function EditableCell({ value, onCommit, placeholder, multiline, classNam
         if (e.key === 'Enter' && !multiline) commit();
         if (e.key === 'Escape') cancel();
       },
-      className: 'w-full rounded-lg border border-accent bg-surface px-2 py-1 text-sm text-ink outline-none',
+      className: 'w-full rounded-lg border border-accent bg-surface px-1.5 py-1 text-sm text-ink outline-none',
     };
     return multiline ? <textarea {...shared} rows={2} /> : <input {...shared} type="text" />;
   }
@@ -54,7 +54,7 @@ export function EditableCell({ value, onCommit, placeholder, multiline, classNam
   return (
     <div
       onDoubleClick={() => !readOnly && setEditing(true)}
-      className={`min-h-[1.75rem] truncate rounded-lg px-2 py-1 text-sm ${readOnly ? '' : 'cursor-text'} ${
+      className={`min-h-[1.75rem] truncate rounded-lg px-1.5 py-1 text-sm ${readOnly ? '' : 'cursor-text'} ${
         value ? 'text-ink' : 'text-ink-faint'
       } ${className ?? ''}`}
       title={readOnly ? undefined : 'Double-click to edit'}
