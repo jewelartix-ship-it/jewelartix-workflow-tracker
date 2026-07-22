@@ -35,20 +35,37 @@ export function DriveCell({ link, onSave, onRemove, readOnly }: DriveCellProps) 
     setMode('closed');
   }
 
+  // Viewers (not admin): clicking the icon shows a small popup with just an
+  // "Open" button — same click-to-open experience as admin mode, minus the
+  // Edit/Remove options they shouldn't have.
   if (readOnly) {
-    return link ? (
-      <a
-        href={link}
-        target="_blank"
-        rel="noreferrer"
-        onClick={(e) => e.stopPropagation()}
-        className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-accent hover:bg-accent-soft"
-        title={link}
-      >
-        <Link2 size={15} />
-      </a>
-    ) : (
-      <span className="inline-block px-2 py-1 text-ink-faint">—</span>
+    if (!link) {
+      return <span className="inline-block px-2 py-1 text-ink-faint">—</span>;
+    }
+    return (
+      <div ref={containerRef} className="relative inline-block" onClick={(e) => e.stopPropagation()}>
+        <button
+          onClick={() => setMode(mode === 'menu' ? 'closed' : 'menu')}
+          className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-accent hover:bg-accent-soft"
+          title={link}
+        >
+          <Link2 size={15} />
+        </button>
+
+        {mode === 'menu' && (
+          <div className="absolute left-0 top-full z-30 mt-1 w-40 overflow-hidden rounded-xl border border-border bg-surface py-1 shadow-popover">
+            <a
+              href={link}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setMode('closed')}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-ink hover:bg-surface-alt"
+            >
+              <ExternalLink size={14} /> Open
+            </a>
+          </div>
+        )}
+      </div>
     );
   }
 
