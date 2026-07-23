@@ -13,15 +13,6 @@ interface TaskModalProps {
   isSaving: boolean;
 }
 
-const PROGRESS_FIELDS: { key: keyof TaskDraft; label: string; owner: string }[] = [
-  { key: 'cadDone', label: 'CAD Done', owner: 'JewelArtix' },
-  { key: 'previewSent', label: 'Preview Sent', owner: 'JewelArtix' },
-  { key: 'cadConfirm', label: 'CAD Confirm', owner: 'Polome' },
-  { key: 'stlSend', label: 'STL Send', owner: 'JewelArtix' },
-  { key: 'renderPhotos', label: 'Render Photos', owner: 'JewelArtix' },
-  { key: 'renderVideos', label: 'Render Videos', owner: 'JewelArtix' },
-];
-
 export function TaskModal({ category, task, onClose, onSave, isSaving }: TaskModalProps) {
   const isEdit = !!task;
   const [form, setForm] = useState<TaskDraft>({
@@ -30,12 +21,6 @@ export function TaskModal({ category, task, onClose, onSave, isSaving }: TaskMod
     sr: task?.sr ?? '',
     lot: task?.lot ?? '',
     fileName: task?.fileName ?? '',
-    cadDone: task?.cadDone ?? false,
-    previewSent: task?.previewSent ?? false,
-    cadConfirm: task?.cadConfirm ?? false,
-    stlSend: task?.stlSend ?? false,
-    renderPhotos: task?.renderPhotos ?? false,
-    renderVideos: task?.renderVideos ?? false,
     cadDriveLink: task?.cadDriveLink ?? '',
     renderDriveLink: task?.renderDriveLink ?? '',
     driveLink: task?.driveLink ?? '',
@@ -139,29 +124,6 @@ export function TaskModal({ category, task, onClose, onSave, isSaving }: TaskMod
                 required
               />
             </Field>
-          </div>
-        </fieldset>
-
-        <fieldset className="space-y-3">
-          <legend className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Progress</legend>
-          <div className="grid grid-cols-2 gap-2">
-            {PROGRESS_FIELDS.map(({ key, label, owner }) => (
-              <label
-                key={key}
-                className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-ink hover:bg-surface-alt"
-              >
-                <input
-                  type="checkbox"
-                  checked={Boolean(form[key])}
-                  onChange={(e) => update(key, e.target.checked as TaskDraft[typeof key])}
-                  className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
-                />
-                <span>
-                  {label}
-                  <span className="ml-1 text-xs font-normal text-ink-faint">by {owner}</span>
-                </span>
-              </label>
-            ))}
           </div>
         </fieldset>
 
