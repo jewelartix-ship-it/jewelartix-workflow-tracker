@@ -38,7 +38,7 @@ export function DriveCell({ link, onSave, onRemove, readOnly }: DriveCellProps) 
         <button
           ref={setAnchorEl}
           onClick={() => setMode(mode === 'menu' ? 'closed' : 'menu')}
-          className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-accent hover:bg-accent-soft"
+          className="inline-flex h-7 w-7 items-center justify-center rounded-md border-2 border-danger text-blue-600 hover:bg-danger-soft"
           title={link}
         >
           <Link2 size={15} />
@@ -69,7 +69,7 @@ export function DriveCell({ link, onSave, onRemove, readOnly }: DriveCellProps) 
         <button
           ref={setAnchorEl}
           onClick={() => setMode(mode === 'menu' ? 'closed' : 'menu')}
-          className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-accent hover:bg-accent-soft"
+          className="inline-flex h-7 w-7 items-center justify-center rounded-md border-2 border-danger text-blue-600 hover:bg-danger-soft"
           title={link}
         >
           <Link2 size={15} />
