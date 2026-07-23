@@ -1,15 +1,14 @@
 import type { NextFunction, Request, Response } from 'express';
 import { config } from '../config.js';
 
-// Everyone, including plain viewers, needs this one shared password before
-// they can see any task data at all — this is checked here on the API
-// itself (not just hidden behind a popup in the browser), so someone can't
-// bypass it by calling the API directly. Separate from the admin password,
-// which only gates editing once you're already past this.
-export function requireViewPassword(req: Request, res: Response, next: NextFunction) {
-  const provided = req.header('X-View-Password');
-  if (provided !== config.viewPassword) {
-    res.status(403).json({ error: { code: 'VIEW_PASSWORD_REQUIRED', message: 'Password required to view this.' } });
+// Two access levels, no user accounts: anyone with the link can view
+// everything; editing (creating, updating, deleting tasks) requires the one
+// shared admin password, sent as a plain header once the person has unlocked
+// it in the browser (see AuthContext / api.ts on the frontend).
+export function requireAdminPassword(req: Request, res: Response, next: NextFunction) {
+  const provided = req.header('X-Admin-Password');
+  if (provided !== config.adminPassword) {
+    res.status(403).json({ error: { code: 'ADMIN_REQUIRED', message: 'Admin password required for this action.' } });
     return;
   }
   next();
