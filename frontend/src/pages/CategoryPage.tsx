@@ -4,17 +4,14 @@ import { useAuth } from '../context/AuthContext';
 import { DashboardCards } from '../components/dashboard/DashboardCards';
 import { Toolbar } from '../components/table/Toolbar';
 import { DataTable } from '../components/table/DataTable';
-import { ReasonTable } from '../components/table/ReasonTable';
 import { TaskModal } from '../components/modals/TaskModal';
 import { ConfirmDialog } from '../components/modals/ConfirmDialog';
 import type { Category, Task, TaskDraft, WorkStatus } from '../types';
-import { CATEGORY_LABELS, cn } from '../lib/utils';
+import { CATEGORY_LABELS } from '../lib/utils';
 
 interface CategoryPageProps {
   category: Category;
 }
-
-type Tab = 'status' | 'reason';
 
 export function CategoryPage({ category }: CategoryPageProps) {
   const { isAdmin } = useAuth();
@@ -23,19 +20,11 @@ export function CategoryPage({ category }: CategoryPageProps) {
   const updateTask = useUpdateTask(category);
   const deleteTask = useDeleteTask(category);
 
-  const [tab, setTab] = useState<Tab>('status');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<WorkStatus | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [modal, setModal] = useState<{ mode: 'add' | 'edit'; task?: Task } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
-
-  // Reset filters that don't make sense to carry across tabs / selection that
-  // no longer applies once the underlying list changes shape.
-  function switchTab(next: Tab) {
-    setTab(next);
-    setSelectedIds(new Set());
-  }
 
   const searched = useMemo(() => {
     if (!tasks) return [];
@@ -84,69 +73,45 @@ export function CategoryPage({ category }: CategoryPageProps) {
     <div className="mx-auto max-w-[1400px] px-4 py-4 sm:px-8 sm:py-8">
       <h1 className="text-2xl font-semibold tracking-tight text-ink">{CATEGORY_LABELS[category]}</h1>
 
-      <div className="mt-3 flex gap-1 border-b border-border sm:mt-5">
-        <TabButton active={tab === 'status'} onClick={() => switchTab('status')}>
-          Work Status
-        </TabButton>
-        <TabButton active={tab === 'reason'} onClick={() => switchTab('reason')}>
-          Reason
-        </TabButton>
-      </div>
+      <div className="mt-3 space-y-3 sm:mt-5 sm:space-y-5">
+        <DashboardCards tasks={searched} activeFilter={statusFilter} onFilterChange={setStatusFilter} />
 
-      {tab === 'status' ? (
-        <div className="mt-3 space-y-3 sm:mt-6 sm:space-y-5">
-          <DashboardCards tasks={searched} activeFilter={statusFilter} onFilterChange={setStatusFilter} />
+        <Toolbar
+          isAdmin={isAdmin}
+          onAdd={() => setModal({ mode: 'add' })}
+          onEdit={() => selectedTask && setModal({ mode: 'edit', task: selectedTask })}
+          onDelete={() => setConfirmDelete(true)}
+          selectedCount={selectedIds.size}
+          search={search}
+          onSearchChange={setSearch}
+        />
 
-          <Toolbar
+        {isLoading ? (
+          <TableSkeleton />
+        ) : (
+          <DataTable
+            tasks={statusTabRows}
             isAdmin={isAdmin}
-            onAdd={() => setModal({ mode: 'add' })}
-            onEdit={() => selectedTask && setModal({ mode: 'edit', task: selectedTask })}
-            onDelete={() => setConfirmDelete(true)}
-            selectedCount={selectedIds.size}
-            search={search}
-            onSearchChange={setSearch}
+            selectedIds={selectedIds}
+            onToggleSelect={toggleSelect}
+            onToggleSelectAll={toggleSelectAll}
+            onFieldEdit={(id, field, value) => updateTask.mutate({ id, patch: { [field]: value }, silent: true })}
+            onProgressToggle={(id, field, value) =>
+              updateTask.mutate({ id, patch: { [field]: value }, silent: true })
+            }
+            onCadDriveSave={(id, link) => updateTask.mutate({ id, patch: { cadDriveLink: link }, silent: true })}
+            onCadDriveRemove={(id) => updateTask.mutate({ id, patch: { cadDriveLink: '' }, silent: true })}
+            onRenderDriveSave={(id, link) => updateTask.mutate({ id, patch: { renderDriveLink: link }, silent: true })}
+            onRenderDriveRemove={(id) => updateTask.mutate({ id, patch: { renderDriveLink: '' }, silent: true })}
+            onRowDoubleClick={(task) => setModal({ mode: 'edit', task })}
+            emptyMessage={
+              search || statusFilter
+                ? 'No tasks match your search or filter.'
+                : `No ${CATEGORY_LABELS[category]} tasks yet. Click Add to create the first one.`
+            }
           />
-
-          {isLoading ? (
-            <TableSkeleton />
-          ) : (
-            <DataTable
-              tasks={statusTabRows}
-              isAdmin={isAdmin}
-              selectedIds={selectedIds}
-              onToggleSelect={toggleSelect}
-              onToggleSelectAll={toggleSelectAll}
-              onFieldEdit={(id, field, value) => updateTask.mutate({ id, patch: { [field]: value }, silent: true })}
-              onProgressToggle={(id, field, value) =>
-                updateTask.mutate({ id, patch: { [field]: value }, silent: true })
-              }
-              onCadDriveSave={(id, link) => updateTask.mutate({ id, patch: { cadDriveLink: link }, silent: true })}
-              onCadDriveRemove={(id) => updateTask.mutate({ id, patch: { cadDriveLink: '' }, silent: true })}
-              onRenderDriveSave={(id, link) => updateTask.mutate({ id, patch: { renderDriveLink: link }, silent: true })}
-              onRenderDriveRemove={(id) => updateTask.mutate({ id, patch: { renderDriveLink: '' }, silent: true })}
-              onRowDoubleClick={(task) => setModal({ mode: 'edit', task })}
-              emptyMessage={
-                search || statusFilter
-                  ? 'No tasks match your search or filter.'
-                  : `No ${CATEGORY_LABELS[category]} tasks yet. Click Add to create the first one.`
-              }
-            />
-          )}
-        </div>
-      ) : (
-        <div className="mt-6">
-          {isLoading ? (
-            <TableSkeleton />
-          ) : (
-            <ReasonTable
-              tasks={searched}
-              isAdmin={isAdmin}
-              onReasonEdit={(id, value) => updateTask.mutate({ id, patch: { reason: value }, silent: true })}
-              emptyMessage={search ? 'No tasks match your search.' : 'No tasks in this category yet.'}
-            />
-          )}
-        </div>
-      )}
+        )}
+      </div>
 
       {modal && (
         <TaskModal
@@ -170,20 +135,6 @@ export function CategoryPage({ category }: CategoryPageProps) {
         />
       )}
     </div>
-  );
-}
-
-function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        '-mb-px border-b-2 px-3 py-2 text-sm font-medium transition-colors',
-        active ? 'border-accent text-ink' : 'border-transparent text-ink-muted hover:text-ink'
-      )}
-    >
-      {children}
-    </button>
   );
 }
 
