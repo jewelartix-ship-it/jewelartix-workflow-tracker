@@ -4,15 +4,17 @@ import { cn } from '../../lib/utils';
 import { Popover } from './Popover';
 
 interface ProgressCellProps {
-  checked: boolean;
+  checked: boolean | null;
   onChange: (value: boolean) => void;
   readOnly?: boolean;
 }
 
 /**
- * Shows the current state as a small check/cross indicator. For admins,
- * clicking it opens a tiny popup with explicit ✓ and ✗ buttons to pick from,
- * rather than a plain checkbox toggle.
+ * Three states: null (blank — the default for a new task, nothing decided
+ * yet), true (done), false (explicitly marked not done). Clicking (admin
+ * only) opens a popup with just ✓ and ✗ to pick — there's no "reset to
+ * blank" button; closing the popup without picking just leaves the current
+ * state as-is.
  */
 export function ProgressCell({ checked, onChange, readOnly }: ProgressCellProps) {
   const [open, setOpen] = useState(false);
@@ -27,10 +29,13 @@ export function ProgressCell({ checked, onChange, readOnly }: ProgressCellProps)
     <span
       className={cn(
         'inline-flex h-5 w-5 items-center justify-center rounded-md border',
-        checked ? 'border-accent bg-accent text-surface' : 'border-border-strong bg-surface text-ink-faint'
+        checked === true && 'border-accent bg-accent text-surface',
+        checked === false && 'border-danger/40 bg-danger-soft text-danger',
+        checked === null && 'border-dashed border-border-strong bg-surface text-transparent'
       )}
     >
-      {checked ? <Check size={13} strokeWidth={3} /> : <X size={13} strokeWidth={3} />}
+      {checked === true && <Check size={13} strokeWidth={3} />}
+      {checked === false && <X size={13} strokeWidth={3} />}
     </span>
   );
 
