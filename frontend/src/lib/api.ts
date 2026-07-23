@@ -14,9 +14,11 @@ export class ApiRequestError extends Error {
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  // Same storage key as AuthContext.ADMIN_PASSWORD_STORAGE_KEY, inlined here
-  // to avoid a circular import (AuthContext itself imports this file).
+  // Same storage keys as AuthContext's ADMIN_PASSWORD_STORAGE_KEY /
+  // VIEW_PASSWORD_STORAGE_KEY, inlined here to avoid a circular import
+  // (AuthContext itself imports this file).
   const adminPassword = sessionStorage.getItem('admin-password');
+  const viewPassword = sessionStorage.getItem('view-password');
 
   const res = await fetch(`/api${path}`, {
     credentials: 'include',
@@ -24,6 +26,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       ...(options.body ? { 'Content-Type': 'application/json' } : {}),
       'X-Requested-With': 'workflow-frontend',
       ...(adminPassword ? { 'X-Admin-Password': adminPassword } : {}),
+      ...(viewPassword ? { 'X-View-Password': viewPassword } : {}),
     },
     ...options,
   });
