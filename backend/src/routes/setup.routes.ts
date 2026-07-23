@@ -1,4 +1,4 @@
-import { Router } from 'express';
+Oimport { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import { eq, sql } from 'drizzle-orm';
@@ -97,6 +97,17 @@ setupRouter.get('/_setup', async (req, res, next) => {
     await db.execute(sql`ALTER TABLE "tasks" ADD COLUMN IF NOT EXISTS "cad_drive_link" text`);
     await db.execute(sql`ALTER TABLE "tasks" ADD COLUMN IF NOT EXISTS "render_drive_link" text`);
     steps.push('cad_drive_link / render_drive_link columns: ok');
+
+    // Tri-state progress: blank (null, new default) / done (true) / not done
+    // (false), instead of just true/false. DROP NOT NULL and DROP DEFAULT
+    // are both safe to run repeatedly — no-ops if already applied. Existing
+    // rows keep whatever true/false they already had; only brand-new tasks
+    // start blank from now on.
+    for (const col of ['cad_done', 'preview_sent', 'cad_confirm', 'stl_send', 'render_photos', 'render_videos']) {
+      await db.execute(sql.raw(`ALTER TABLE "tasks" ALTER COLUMN "${col}" DROP NOT NULL`));
+      await db.execute(sql.raw(`ALTER TABLE "tasks" ALTER COLUMN "${col}" DROP DEFAULT`));
+    }
+    steps.push('progress columns: now nullable tri-state (blank/done/not done)');
 
     const [existing] = await db.select().from(users).where(eq(users.email, config.seedAdmin.email)).limit(1);
     if (existing) {
