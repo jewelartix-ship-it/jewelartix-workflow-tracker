@@ -45,6 +45,16 @@ const adminLimiter = rateLimit({
   message: { error: { code: 'TOO_MANY_ATTEMPTS', message: 'Too many attempts. Try again in 15 minutes.' } },
 });
 
+authRouter.post('/verify-view', adminLimiter, (req, res, next) => {
+  try {
+    const { password } = adminPasswordSchema.parse(req.body);
+    if (password !== config.viewPassword) throw ApiError.unauthorized('Incorrect password');
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
 authRouter.post('/verify-admin', adminLimiter, (req, res, next) => {
   try {
     const { password } = adminPasswordSchema.parse(req.body);
