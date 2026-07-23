@@ -1,26 +1,25 @@
 import { useState } from 'react';
-import { Check, X } from 'lucide-react';
+import { Check, X, Minus } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Popover } from './Popover';
 
 interface ProgressCellProps {
   checked: boolean | null;
-  onChange: (value: boolean) => void;
+  onChange: (value: boolean | null) => void;
   readOnly?: boolean;
 }
 
 /**
  * Three states: null (blank — the default for a new task, nothing decided
  * yet), true (done), false (explicitly marked not done). Clicking (admin
- * only) opens a popup with just ✓ and ✗ to pick — there's no "reset to
- * blank" button; closing the popup without picking just leaves the current
- * state as-is.
+ * only) opens a popup with ✓, ✗, and a third "clear" option to reset back to
+ * blank in case of a mistake.
  */
 export function ProgressCell({ checked, onChange, readOnly }: ProgressCellProps) {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  function pick(value: boolean) {
+  function pick(value: boolean | null) {
     onChange(value);
     setOpen(false);
   }
@@ -65,6 +64,14 @@ export function ProgressCell({ checked, onChange, readOnly }: ProgressCellProps)
               aria-label="Mark not done"
             >
               <X size={16} strokeWidth={3} />
+            </button>
+            <button
+              onClick={() => pick(null)}
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-ink-faint hover:bg-surface-alt"
+              aria-label="Clear (reset to blank)"
+              title="Clear"
+            >
+              <Minus size={16} strokeWidth={3} />
             </button>
           </div>
         </Popover>
