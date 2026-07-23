@@ -17,6 +17,7 @@ export const config = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '8h',
   corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
   adminPassword: process.env.ADMIN_PASSWORD ?? 'change-this-admin-password',
+  viewPassword: process.env.VIEW_PASSWORD ?? 'change-this-view-password',
   seedAdmin: {
     name: process.env.SEED_ADMIN_NAME ?? 'Admin',
     email: process.env.SEED_ADMIN_EMAIL ?? 'admin@yourcompany.com',
