@@ -30,7 +30,7 @@ interface DataTableProps {
   onToggleSelect: (id: string) => void;
   onToggleSelectAll: () => void;
   onFieldEdit: (id: string, field: 'date' | 'sr' | 'lot' | 'fileName' | 'note', value: string) => void;
-  onProgressToggle: (id: string, field: ProgressField['key'], value: boolean) => void;
+  onProgressToggle: (id: string, field: ProgressField['key'], value: boolean | null) => void;
   onCadDriveSave: (id: string, link: string) => void;
   onCadDriveRemove: (id: string) => void;
   onRenderDriveSave: (id: string, link: string) => void;
