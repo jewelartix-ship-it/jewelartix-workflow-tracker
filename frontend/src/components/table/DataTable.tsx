@@ -83,7 +83,7 @@ export function DataTable({
             <th className="min-w-[54px] px-1.5 py-2.5 text-center">Date</th>
             <th className="min-w-[50px] px-1.5 py-2.5 text-center">SR</th>
             <th className="min-w-[50px] px-1.5 py-2.5 text-center">Lot</th>
-            <th className="sticky -left-[27px] z-20 min-w-[110px] border-r border-border bg-surface-alt px-1.5 py-2.5 text-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]">
+            <th className="sticky -left-[44px] z-20 min-w-[110px] border-r border-border bg-surface-alt px-1.5 py-2.5 text-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]">
               File Name
             </th>
             {PROGRESS_COLUMNS.map((c) => (
@@ -154,7 +154,7 @@ export function DataTable({
                 </td>
                 <td
                   data-inline-editable
-                  className="sticky -left-[27px] z-10 border-r border-border bg-surface px-1 py-1 text-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]"
+                  className="sticky -left-[44px] z-10 border-r border-border bg-surface px-1 py-1 text-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]"
                 >
                   <EditableCell
                     value={task.fileName}
