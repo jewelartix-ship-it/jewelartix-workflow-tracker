@@ -66,9 +66,9 @@ export function DataTable({
 
   return (
     <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
-      <table className="w-full min-w-[820px] border-collapse text-left">
+      <table className="w-full min-w-[920px] border-separate border-spacing-0 text-left">
         <thead className="sticky top-0 z-10 bg-surface-alt">
-          <tr className="divide-x divide-border text-xs font-semibold uppercase tracking-wide text-ink-muted">
+          <tr className="divide-x divide-border-strong text-xs font-semibold uppercase tracking-wide text-ink-muted">
             <th className="w-10 px-2 py-2.5">
               {isAdmin && (
                 <input
@@ -83,11 +83,13 @@ export function DataTable({
             <th className="min-w-[54px] px-1.5 py-2.5 text-center">Date</th>
             <th className="min-w-[50px] px-1.5 py-2.5 text-center">SR</th>
             <th className="min-w-[50px] px-1.5 py-2.5 text-center">Lot</th>
-            <th className="min-w-[110px] px-1.5 py-2.5 text-center">File Name</th>
+            <th className="sticky left-0 z-20 min-w-[110px] border-r border-border bg-surface-alt px-1.5 py-2.5 text-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]">
+              File Name
+            </th>
             {PROGRESS_COLUMNS.map((c) => (
-              <th key={c.key} className="w-[80px] px-1.5 py-2.5 text-center">
-                {c.label}
-                <span className="mt-0.5 block text-[9px] font-medium normal-case tracking-normal text-ink-faint">
+              <th key={c.key} className="w-[96px] whitespace-nowrap px-1.5 py-2.5 text-center leading-tight">
+                <span className="block">{c.label}</span>
+                <span className="mt-1 block text-[9px] font-medium normal-case tracking-normal text-ink-faint">
                   by {c.owner}
                 </span>
               </th>
@@ -115,7 +117,7 @@ export function DataTable({
                   }
                 }}
                 className={cn(
-                  'divide-x divide-border border-t border-border transition-colors hover:bg-surface-alt/60',
+                  'divide-x divide-border-strong transition-colors hover:bg-surface-alt/60 [&>td]:border-t [&>td]:border-border-strong',
                   selected && 'bg-accent-soft/40'
                 )}
               >
@@ -150,7 +152,10 @@ export function DataTable({
                 <td data-inline-editable className="px-1 py-1 text-center">
                   <EditableCell value={task.lot} onCommit={(v) => onFieldEdit(task.id, 'lot', v)} readOnly={!isAdmin} />
                 </td>
-                <td data-inline-editable className="px-1 py-1 text-center">
+                <td
+                  data-inline-editable
+                  className="sticky left-0 z-10 border-r border-border bg-surface px-1 py-1 text-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]"
+                >
                   <EditableCell
                     value={task.fileName}
                     onCommit={(v) => onFieldEdit(task.id, 'fileName', v)}
