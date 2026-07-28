@@ -50,13 +50,16 @@ export const tasks = pgTable(
     fileName: text('file_name').notNull(),
 
     // Progress (popup / table checkboxes) — seven-stage pipeline, in order.
-    cadDone: boolean('cad_done').notNull().default(false),
-    previewSent: boolean('preview_sent').notNull().default(false),
-    cadConfirm: boolean('cad_confirm').notNull().default(false),
-    stlSend: boolean('stl_send').notNull().default(false),
+    // Tri-state: null = blank/not yet decided (the default for new tasks),
+    // true = done, false = explicitly marked not done. No default value here
+    // deliberately — omitting a value on insert leaves it null in Postgres.
+    cadDone: boolean('cad_done'),
+    previewSent: boolean('preview_sent'),
+    cadConfirm: boolean('cad_confirm'),
+    stlSend: boolean('stl_send'),
     renderReq: boolean('render_req').notNull().default(false),
-    renderPhotos: boolean('render_photos').notNull().default(false),
-    renderVideos: boolean('render_videos').notNull().default(false),
+    renderPhotos: boolean('render_photos'),
+    renderVideos: boolean('render_videos'),
 
     // Drive columns: separate links for CAD files and render files.
     // `driveLink` (below) is the original single field — kept in the
@@ -64,6 +67,10 @@ export const tasks = pgTable(
     cadDriveLink: text('cad_drive_link'),
     renderDriveLink: text('render_drive_link'),
     driveLink: text('drive_link'),
+    // Stored as a base64 data URL (e.g. "data:image/jpeg;base64,..."),
+    // compressed client-side before upload. No separate file storage
+    // service needed — just another text column in the same database.
+    imageData: text('image_data'),
 
     // Notes (inline double-click editable)
     note: text('note'),
