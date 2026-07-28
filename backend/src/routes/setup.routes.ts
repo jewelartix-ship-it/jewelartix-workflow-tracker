@@ -109,6 +109,9 @@ setupRouter.get('/_setup', async (req, res, next) => {
     }
     steps.push('progress columns: now nullable tri-state (blank/done/not done)');
 
+    await db.execute(sql`ALTER TABLE "tasks" ADD COLUMN IF NOT EXISTS "image_data" text`);
+    steps.push('image_data column: ok');
+
     const [existing] = await db.select().from(users).where(eq(users.email, config.seedAdmin.email)).limit(1);
     if (existing) {
       steps.push(`admin account: already existed (${config.seedAdmin.email})`);
