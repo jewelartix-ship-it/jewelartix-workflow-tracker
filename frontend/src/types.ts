@@ -44,6 +44,7 @@ export interface Task {
   cadDriveLink: string | null;
   renderDriveLink: string | null;
   driveLink: string | null;
+  imageData: string | null;
   note: string | null;
   reason: string | null;
   createdBy: string | null;
@@ -57,7 +58,7 @@ export interface Task {
 type ProgressFieldKeys = 'cadDone' | 'previewSent' | 'cadConfirm' | 'stlSend' | 'renderPhotos' | 'renderVideos';
 
 export type TaskDraft = Pick<Task, 'category' | 'date' | 'sr' | 'lot' | 'fileName'> &
-  Partial<Pick<Task, ProgressFieldKeys | 'cadDriveLink' | 'renderDriveLink' | 'driveLink' | 'note' | 'reason'>>;
+  Partial<Pick<Task, ProgressFieldKeys | 'cadDriveLink' | 'renderDriveLink' | 'driveLink' | 'imageData' | 'note' | 'reason'>>;
 
 export interface TaskSummary {
   total: number;
