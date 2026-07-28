@@ -2,6 +2,7 @@ import { AlertCircle } from 'lucide-react';
 import type { Task } from '../../types';
 import { EditableCell } from './EditableCell';
 import { DriveCell } from './DriveCell';
+import { ImageCell } from './ImageCell';
 import { ProgressCell } from './ProgressCell';
 import { WORK_STATUS_ACCENT } from '../../lib/workStatus';
 import { isStale } from '../../lib/workStatus';
@@ -32,6 +33,8 @@ interface DataTableProps {
   onFieldEdit: (id: string, field: 'date' | 'sr' | 'lot' | 'fileName' | 'note', value: string) => void;
   onProgressToggle: (id: string, field: ProgressField['key'], value: boolean | null) => void;
   onCadDriveSave: (id: string, link: string) => void;
+  onImageSave: (id: string, dataUrl: string) => void;
+  onImageRemove: (id: string) => void;
   onCadDriveRemove: (id: string) => void;
   onRenderDriveSave: (id: string, link: string) => void;
   onRenderDriveRemove: (id: string) => void;
@@ -48,6 +51,8 @@ export function DataTable({
   onFieldEdit,
   onProgressToggle,
   onCadDriveSave,
+  onImageSave,
+  onImageRemove,
   onCadDriveRemove,
   onRenderDriveSave,
   onRenderDriveRemove,
@@ -66,7 +71,7 @@ export function DataTable({
 
   return (
     <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
-      <table className="w-full min-w-[920px] border-separate border-spacing-0 text-left">
+      <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
         <thead className="sticky top-0 z-10 bg-surface-alt">
           <tr className="divide-x divide-border-strong text-xs font-semibold uppercase tracking-wide text-ink-muted">
             <th className="w-10 px-2 py-2.5">
@@ -86,6 +91,7 @@ export function DataTable({
             <th className="sticky -left-[44px] z-20 min-w-[110px] border-r border-border bg-surface-alt px-1.5 py-2.5 text-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]">
               File Name
             </th>
+            <th className="w-14 px-1.5 py-2.5 text-center">Image</th>
             {PROGRESS_COLUMNS.map((c) => (
               <th key={c.key} className="w-[96px] whitespace-nowrap px-1.5 py-2.5 text-center leading-tight">
                 <span className="block">{c.label}</span>
@@ -159,6 +165,14 @@ export function DataTable({
                   <EditableCell
                     value={task.fileName}
                     onCommit={(v) => onFieldEdit(task.id, 'fileName', v)}
+                    readOnly={!isAdmin}
+                  />
+                </td>
+                <td data-no-row-edit className="px-1.5 py-1.5 text-center">
+                  <ImageCell
+                    imageData={task.imageData}
+                    onSave={(dataUrl) => onImageSave(task.id, dataUrl)}
+                    onRemove={() => onImageRemove(task.id)}
                     readOnly={!isAdmin}
                   />
                 </td>
