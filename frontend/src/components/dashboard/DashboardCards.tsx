@@ -1,5 +1,5 @@
 import type { Task, WorkStatus } from '../../types';
-import { DASHBOARD_CARD_STATUSES, WORK_STATUS_LABELS } from '../../lib/workStatus';
+import { DASHBOARD_CARD_STATUSES, WORK_STATUS_LABELS, isPendingAtOrBefore } from '../../lib/workStatus';
 import { cn } from '../../lib/utils';
 
 interface DashboardCardsProps {
@@ -12,7 +12,11 @@ export function DashboardCards({ tasks, activeFilter, onFilterChange }: Dashboar
   const counts = new Map<WorkStatus, number>();
   for (const status of DASHBOARD_CARD_STATUSES) counts.set(status, 0);
   for (const task of tasks) {
-    if (counts.has(task.workStatus)) counts.set(task.workStatus, (counts.get(task.workStatus) ?? 0) + 1);
+    for (const status of DASHBOARD_CARD_STATUSES) {
+      if (isPendingAtOrBefore(task.workStatus, status)) {
+        counts.set(status, (counts.get(status) ?? 0) + 1);
+      }
+    }
   }
 
   return (
