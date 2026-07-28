@@ -30,6 +30,7 @@ export const taskBaseSchema = z.object({
   cadDriveLink: z.union([z.string().trim().url('Must be a valid URL'), z.literal('')]).nullable().optional(),
   renderDriveLink: z.union([z.string().trim().url('Must be a valid URL'), z.literal('')]).nullable().optional(),
   driveLink: z.union([z.string().trim().url('Must be a valid URL'), z.literal('')]).nullable().optional(),
+  imageData: z.string().nullable().optional(),
   note: z.string().max(5000).nullable().optional(),
   reason: z.string().max(2000).nullable().optional(),
 });
