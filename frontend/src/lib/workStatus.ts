@@ -65,3 +65,17 @@ export function isStale(task: Task): boolean {
   const days = (Date.now() - updated) / (1000 * 60 * 60 * 24);
   return days > STALE_AFTER_DAYS;
 }
+
+/**
+ * A task counts as pending for a given dashboard card if it hasn't reached
+ * that stage yet in the pipeline — e.g. if Render Photos is still blank,
+ * Render Videos counts as pending too, since it logically can't be done
+ * before photos are. Used both for the dashboard card counts and for what
+ * shows up when a card is clicked as a filter, so the two always agree.
+ */
+export function isPendingAtOrBefore(taskStatus: WorkStatus, cardStatus: WorkStatus): boolean {
+  const taskIdx = DASHBOARD_CARD_STATUSES.indexOf(taskStatus);
+  const cardIdx = DASHBOARD_CARD_STATUSES.indexOf(cardStatus);
+  if (taskIdx === -1 || cardIdx === -1) return false;
+  return taskIdx <= cardIdx;
+}
