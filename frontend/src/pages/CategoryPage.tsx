@@ -8,6 +8,7 @@ import { TaskModal } from '../components/modals/TaskModal';
 import { ConfirmDialog } from '../components/modals/ConfirmDialog';
 import type { Category, Task, TaskDraft, WorkStatus } from '../types';
 import { CATEGORY_LABELS } from '../lib/utils';
+import { isPendingAtOrBefore } from '../lib/workStatus';
 
 interface CategoryPageProps {
   category: Category;
@@ -36,7 +37,7 @@ export function CategoryPage({ category }: CategoryPageProps) {
   }, [tasks, search]);
 
   const statusTabRows = useMemo(
-    () => (statusFilter ? searched.filter((t) => t.workStatus === statusFilter) : searched),
+    () => (statusFilter ? searched.filter((t) => isPendingAtOrBefore(t.workStatus, statusFilter)) : searched),
     [searched, statusFilter]
   );
 
@@ -103,6 +104,8 @@ export function CategoryPage({ category }: CategoryPageProps) {
             onCadDriveRemove={(id) => updateTask.mutate({ id, patch: { cadDriveLink: '' }, silent: true })}
             onRenderDriveSave={(id, link) => updateTask.mutate({ id, patch: { renderDriveLink: link }, silent: true })}
             onRenderDriveRemove={(id) => updateTask.mutate({ id, patch: { renderDriveLink: '' }, silent: true })}
+            onImageSave={(id, dataUrl) => updateTask.mutate({ id, patch: { imageData: dataUrl }, silent: true })}
+            onImageRemove={(id) => updateTask.mutate({ id, patch: { imageData: null }, silent: true })}
             onRowDoubleClick={(task) => setModal({ mode: 'edit', task })}
             emptyMessage={
               search || statusFilter
