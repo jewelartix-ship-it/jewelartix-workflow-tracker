@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { Image as ImageIcon, Upload, Eye, Trash2 } from 'lucide-react';
 import { Popover } from '../table/Popover';
 import { ImageLightbox } from '../common/ImageLightbox';
+import { cn } from '../../lib/utils';
 
 interface ImageCellProps {
   imageData: string | null;
@@ -15,7 +16,7 @@ interface ImageCellProps {
 const MAX_DIMENSION = 1000;
 const JPEG_QUALITY = 0.75;
 
-function compressImage(file: File): Promise<string> {
+function compressImage(file: File | Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error('Could not read file'));
@@ -51,13 +52,14 @@ export function ImageCell({ imageData, onSave, onRemove, readOnly }: ImageCellPr
   const [mode, setMode] = useState<'closed' | 'menu'>('closed');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = '';
+  // Shared by: file picker, drag-and-drop, and clipboard paste — all three
+  // just need to hand this a File or Blob and the rest is identical.
+  async function processFile(file: File | Blob | null | undefined) {
     if (!file) return;
     setError(null);
     setIsUploading(true);
@@ -69,6 +71,37 @@ export function ImageCell({ imageData, onSave, onRemove, readOnly }: ImageCellPr
     } finally {
       setIsUploading(false);
       setMode('closed');
+    }
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    await processFile(file);
+  }
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    if (!readOnly) setIsDragOver(true);
+  }
+  function handleDragLeave() {
+    setIsDragOver(false);
+  }
+  async function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDragOver(false);
+    if (readOnly) return;
+    const file = Array.from(e.dataTransfer.files).find((f) => f.type.startsWith('image/'));
+    await processFile(file);
+  }
+
+  async function handlePaste(e: React.ClipboardEvent) {
+    if (readOnly) return;
+    const item = Array.from(e.clipboardData.items).find((i) => i.type.startsWith('image/'));
+    const file = item?.getAsFile();
+    if (file) {
+      e.preventDefault();
+      await processFile(file);
     }
   }
 
@@ -85,14 +118,26 @@ export function ImageCell({ imageData, onSave, onRemove, readOnly }: ImageCellPr
   }
 
   return (
-    <div className="inline-block" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="inline-block"
+      onClick={(e) => e.stopPropagation()}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      onPaste={handlePaste}
+      tabIndex={0}
+      title="Click to upload, or drag-and-drop / paste an image here"
+    >
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
 
       {imageData ? (
         <button
           ref={setAnchorEl}
           onClick={() => setMode(mode === 'menu' ? 'closed' : 'menu')}
-          className="block h-9 w-9 overflow-hidden rounded-lg border border-border hover:border-border-strong"
+          className={cn(
+            'block h-9 w-9 overflow-hidden rounded-lg border hover:border-border-strong',
+            isDragOver ? 'border-2 border-accent' : 'border-border'
+          )}
         >
           <img src={imageData} alt="Task" className="h-full w-full object-cover" />
         </button>
@@ -100,8 +145,11 @@ export function ImageCell({ imageData, onSave, onRemove, readOnly }: ImageCellPr
         <button
           ref={setAnchorEl}
           onClick={() => (isUploading ? undefined : fileInputRef.current?.click())}
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-dashed border-border-strong text-ink-faint hover:bg-surface-alt hover:text-ink-muted"
-          aria-label="Upload image"
+          className={cn(
+            'flex h-9 w-9 items-center justify-center rounded-lg border text-ink-faint hover:bg-surface-alt hover:text-ink-muted',
+            isDragOver ? 'border-2 border-accent bg-accent-soft' : 'border-dashed border-border-strong'
+          )}
+          aria-label="Upload image — click, drag a file here, or paste"
         >
           {isUploading ? (
             <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-ink-faint border-t-transparent" />
